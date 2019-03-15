@@ -1,4 +1,3 @@
-import numpy as np
 import random
 from Functions import steal_item
 
@@ -10,13 +9,18 @@ class Thief:
         self.f = 0
         self.g = 0
         self.G = 0
+        self.a_wheel = 0
+        self.b_wheel = 0
 
     def generate(self):
         random.shuffle(self.cities)
 
     # f(x, y), g(y), G(x, y)
-    def route_distance(self, distances, items, w, v_max, v_min):
+    def eval_fitness(self, distances, items, w, v_max, v_min):
         w_c = 0
+        self.f = 0
+        self.g = 0
+        self.G = 0
 
         for i in range(len(self.cities)):
             stolen_item_index = steal_item(items, self.cities[i].index, w, w_c)
@@ -45,6 +49,7 @@ class Thief:
         self.cities[i] = self.cities[j]
         self.cities[j] = first_city
 
+    # PMX
     def cross(self, second_thief):
         a = random.randrange(0, len(self.cities) - 1)
         b = random.randrange(0, len(self.cities))
@@ -81,10 +86,25 @@ class Thief:
                     second_thief.cities[i] = second_alleles[l]
                     l += 1
 
+    def copy(self):
+        thief = Thief(list.copy(self.cities))
+        thief.g = self.g
+        thief.f = self.f
+        thief.G = self.G
+
+        return thief
 
     def print_cities(self):
         s = ""
         for c in self.cities:
             s += str(c.index)
             s += ", "
+        print(s)
+
+    def print(self):
+        s = ""
+        for c in self.cities:
+            s += str(c.index)
+            s += ", "
+        s += str(self.G)
         print(s)
