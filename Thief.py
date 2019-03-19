@@ -9,6 +9,7 @@ class Thief:
         self.f = 0
         self.g = 0
         self.G = 0
+        self.fitness = 0
         self.a_wheel = 0
         self.b_wheel = 0
 
@@ -21,6 +22,7 @@ class Thief:
         self.f = 0
         self.g = 0
         self.G = 0
+        self.fitness = 0
 
         for i in range(len(self.cities)):
             stolen_item_index = steal_item(items, self.cities[i].index, w, w_c)
@@ -38,7 +40,7 @@ class Thief:
         self.G = self.g - self.f
 
     # swap
-    def mutate(self):
+    def swap_mutate(self):
         i = random.randrange(0, len(self.cities))
         j = random.randrange(0, len(self.cities))
 
@@ -48,6 +50,19 @@ class Thief:
         first_city = self.cities[i]
         self.cities[i] = self.cities[j]
         self.cities[j] = first_city
+
+    # reverse
+    def reverse_mutate(self):
+        i = random.randrange(0, len(self.cities) - 1)
+        j = random.randrange(0, len(self.cities))
+
+        while (j <= i):
+            j = random.randrange(0, len(self.cities))
+
+        if i != 0:
+            self.cities = self.cities[:i] + self.cities[j:i-1:-1] + self.cities[j+1:]
+        else:
+            self.cities = self.cities[:i] + self.cities[j::-1] + self.cities[j+1:]
 
     # PMX
     def cross(self, second_thief):
@@ -69,6 +84,7 @@ class Thief:
         k = 0
         l = 0
         for i in range(0, a):
+            print("i: " + str(i))
             for j in range(b - a):
                 if self.cities[i].index == second_alleles[j].index:
                     self.cities[i] = first_alleles[k]
@@ -78,6 +94,7 @@ class Thief:
                     l += 1
 
         for i in range(b, len(self.cities)):
+            print("i: " + str())
             for j in range(b - a):
                 if self.cities[i].index == second_alleles[j].index:
                     self.cities[i] = first_alleles[k]
@@ -85,6 +102,48 @@ class Thief:
                 if second_thief.cities[i].index == first_alleles[j].index:
                     second_thief.cities[i] = second_alleles[l]
                     l += 1
+
+    # OX
+    def cross2(self, second_thief):
+        size = len(self.cities)
+        a = random.randrange(0, size - 1)
+        b = random.randrange(0, size)
+        k = 0
+        l = 0
+
+        while (b <= a):
+            b = random.randrange(0, size)
+
+        if a == 0:
+            k = b
+            l = b
+
+        first_alleles = [x.index for x in self.cities[a:b]]
+        second_alleles = [x.index for x in second_thief.cities[a:b]]
+
+        new_thief1 = [0] * size
+        new_thief2 = [0] * size
+
+        for i in range(a, b):
+            new_thief1[i] = second_thief.cities[i].index
+            new_thief2[i] = self.cities[i].index
+
+        for i in range(size):
+            if second_thief.cities[i].index not in first_alleles:
+                new_thief2[k] = second_thief.cities[i].index
+                k += 1
+                if k == a:
+                    k = b
+            if self.cities[i].index not in second_alleles:
+                new_thief1[l] = self.cities[i].index
+                l += 1
+                if l == a:
+                    l = b
+
+        for i in range(size):
+            self.cities[i] = second_thief.get_city(new_thief1[i])
+        for i in range(size):
+            second_thief.cities[i] = self.get_city(new_thief2[i])
 
     def copy(self):
         thief = Thief(list.copy(self.cities))
@@ -108,3 +167,8 @@ class Thief:
             s += ", "
         s += str(self.G)
         print(s)
+
+    def get_city(self, index):
+        for i in range(len(self.cities)):
+            if self.cities[i].index == index:
+                return self.cities[i]
