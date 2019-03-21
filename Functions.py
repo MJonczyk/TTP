@@ -1,13 +1,10 @@
 
 
 # greedy algorithm
-def steal_item(items, city_index, w, w_c):
-    ratio = 0
-    stolen_item_index = -1
-    for j in range(len(items)):
-        if items[j].city_index == city_index:
-            if items[j].profit_weight_ratio > ratio and w_c + items[j].weight < w:
-                stolen_item_index = j
-                ratio = items[j].profit_weight_ratio
-
-    return stolen_item_index
+def steal_item(city, w, w_c):
+    i = 0
+    while i < len(city.items):
+        if city.items[i].weight + w_c < w:
+            return i
+        i += 1
+    return -1

@@ -26,10 +26,11 @@ def load_data(filename):
     dim = variables['dim']
     number_of_items = variables['number_of_items']
 
-    cities = data[10:(10 + dim)]
-    cities = load_cities(cities)
     items = data[(10 + dim + 1):(10 + dim + 1 + number_of_items)]
     items = load_items(items)
+    cities = data[10:(10 + dim)]
+    cities = load_cities(cities, items)
+    sort_items(cities)
 
     distances = np.empty([dim, dim])
     for i in range(dim):
@@ -41,12 +42,22 @@ def load_data(filename):
     return (variables, cities, distances, items)
 
 
-def load_cities(cities):
+def load_cities(cities, items):
     cities = [c.split() for c in cities]
     cities = np.array(cities)
     cities = cities.astype(float)
-    cities = [City(int(c[0]), c[1], c[2]) for c in cities]
+    cities_items = list()
+    for i in range(len(cities)):
+        cities_items.append(list())
+    for i in range(len(items)):
+        cities_items[items[i].city_index - 1].append(items[i])
+    cities = [City(int(c[0]), c[1], c[2], cities_items[int(c[0]) - 1]) for c in cities]
     return cities
+
+
+def sort_items(cities):
+    for i in range(len(cities)):
+        cities[i].items.sort(key=lambda x: x.profit_weight_ratio, reverse=True)
 
 
 def load_items(items):

@@ -1,21 +1,23 @@
 from Loader import load_data
-from Thief import Thief
 from Logger import Logger
 from Population import Population
-import os
 
-filename = 'data/trivial_0.ttp'
+filename = 'data/hard_0.ttp'
 (variables, cities, distances, items) = load_data(filename)
 
 NUMBER_OF_THIEVES = 100
 NUMBER_OF_GENERATIONS = 100
 CROSSOVER_PROBABILITY = 0.7
-MUTATION_PROBABILITY = 0.1
+MUTATION_PROBABILITY = 0.01
+TOURNAMENT_SIZE = 5
 
-logger = Logger('trivial_0')
+header = ('p' + str(NUMBER_OF_THIEVES), 'g' + str(NUMBER_OF_GENERATIONS), 'pc' + str(CROSSOVER_PROBABILITY), 'pm' + str(MUTATION_PROBABILITY))
+header = '_'.join(header)
+logfile = filename[5:-4]
+logger = Logger(logfile, header)
 logger.create_file()
 
-pop = Population(NUMBER_OF_THIEVES, distances, cities, items, variables['w'], variables['v_max'], variables['v_min'], CROSSOVER_PROBABILITY, MUTATION_PROBABILITY, 5)
+pop = Population(NUMBER_OF_THIEVES, distances, cities, items, variables['w'], variables['v_max'], variables['v_min'], CROSSOVER_PROBABILITY, MUTATION_PROBABILITY, TOURNAMENT_SIZE)
 pop.initialize()
 pop.evaluate()
 for i in range(NUMBER_OF_GENERATIONS):

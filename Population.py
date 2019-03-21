@@ -23,7 +23,7 @@ class Population:
 
     def evaluate(self):
         for i in range(self.number_of_thieves):
-            self.thieves[i].eval_fitness(self.distances, self.items, self.w, self.v_max, self.v_min)
+            self.thieves[i].eval_fitness(self.distances, self.w, self.v_max, self.v_min)
 
     def crossover(self):
         for i in range(self.number_of_thieves):
@@ -31,7 +31,7 @@ class Population:
                 ind = random.randrange(0, self.number_of_thieves)
                 while ind == i:
                     ind = random.randrange(0, self.number_of_thieves)
-                self.thieves[i].cross2(self.thieves[ind])
+                self.thieves[i].cross(self.thieves[ind])
 
     def mutation(self):
         for i in range(self.number_of_thieves):
