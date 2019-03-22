@@ -150,6 +150,7 @@ class Thief:
         thief.g = self.g
         thief.f = self.f
         thief.G = self.G
+        thief.fitness = self.fitness
 
         return thief
 

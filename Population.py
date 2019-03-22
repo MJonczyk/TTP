@@ -3,12 +3,11 @@ from Thief import Thief
 
 
 class Population:
-    def __init__(self, number_of_thieves, distances, cities, items, w, v_max, v_min, p_c, p_m, tournament_size=0):
+    def __init__(self, number_of_thieves, distances, cities, w, v_max, v_min, p_c, p_m, tournament_size=0):
         self.number_of_thieves = number_of_thieves
         self.thieves = []
         self.distances = distances
         self.cities = cities
-        self.items = items
         self.w = w
         self.v_max = v_max
         self.v_min = v_min
@@ -39,47 +38,45 @@ class Population:
                 self.thieves[i].reverse_mutate()
 
     def roulette_selection(self):
+        worst_G = sorted(self.thieves, key=lambda x: x.G)[0].G - 1
         sum_of_fitness = 0
-        sum_of_probability = 0
         for i in range(self.number_of_thieves):
-            sum_of_fitness -= self.thieves[i].G
+            self.thieves[i].fitness = self.thieves[i].G - worst_G
+            sum_of_fitness += self.thieves[i].fitness
 
-        for i in range(self.number_of_thieves):
-            probability = -self.thieves[i].G / sum_of_fitness
-            self.thieves[i].a_wheel = sum_of_probability
-            sum_of_probability += probability
-            self.thieves[i].b_wheel = sum_of_probability
+        new_thieves = []
+        while len(new_thieves) < self.number_of_thieves:
+            pick = random.uniform(0, sum_of_fitness)
+            current = 0
+            for thief in self.thieves:
+                current += thief.fitness
+                if current > pick:
+                    new_thieves.append(thief.copy())
 
-        next_generation = []
-        while len(next_generation) < len(self.thieves):
-            ind = random.random()
-            for i in range(len(self.thieves)):
-                if self.thieves[i].b_wheel > ind > self.thieves[i].a_wheel:
-                    next_generation.append(self.thieves[i].copy())
-
-        self.thieves = next_generation
+        self.thieves = new_thieves
 
     def roulette_selection2(self):
-        worst_G = -(sorted(self.thieves, key=lambda x: x.G)[0]) + 1
+        worst_G = sorted(self.thieves, key=lambda x: x.G)[0].G - 1
         sum_of_fitness = 0
         sum_of_probability = 0
         for i in range(self.number_of_thieves):
-            sum_of_fitness -= self.thieves[i].G
+            self.thieves[i].fitness = self.thieves[i].G - worst_G
+            sum_of_fitness += self.thieves[i].fitness
 
         for i in range(self.number_of_thieves):
-            probability = -self.thieves[i].G / sum_of_fitness
+            probability = self.thieves[i].fitness / sum_of_fitness
             self.thieves[i].a_wheel = sum_of_probability
             sum_of_probability += probability
             self.thieves[i].b_wheel = sum_of_probability
 
-        next_generation = []
-        while len(next_generation) < len(self.thieves):
+        new_thieves = []
+        while len(new_thieves) < self.number_of_thieves:
             ind = random.random()
-            for i in range(len(self.thieves)):
+            for i in range(self.number_of_thieves):
                 if self.thieves[i].b_wheel > ind > self.thieves[i].a_wheel:
-                    next_generation.append(self.thieves[i].copy())
+                    new_thieves.append(self.thieves[i].copy())
 
-        self.thieves = next_generation
+        self.thieves = new_thieves
 
     def tournament_selection(self):
         new_thieves = []
@@ -100,6 +97,8 @@ class Population:
         worst = min([x.G for x in self.thieves])
         best = max([x.G for x in self.thieves])
         average = sum([x.G for x in self.thieves]) / self.number_of_thieves
+        print(sum([x.G for x in self.thieves]))
+        print(self.number_of_thieves)
         return str(best) + ";" + str(average) + ";" + str(worst)
 
     def get_best(self):
