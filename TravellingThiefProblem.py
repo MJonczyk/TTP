@@ -18,7 +18,7 @@ class TravellingThiefProblem:
     def selection(self):
         if self.tournament_size == 0:
             for i in range(self.number_of_populations):
-                self.populations[i].roulette_selection2()
+                self.populations[i].roulette_selection()
         else:
             for i in range(self.number_of_populations):
                 self.populations[i].tournament_selection()

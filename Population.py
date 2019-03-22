@@ -40,38 +40,17 @@ class Population:
     def roulette_selection(self):
         worst_G = sorted(self.thieves, key=lambda x: x.G)[0].G - 1
         sum_of_fitness = 0
+        self.thieves.sort(key=lambda x: x.G)
         for i in range(self.number_of_thieves):
-            self.thieves[i].fitness = self.thieves[i].G - worst_G
+            self.thieves[i].a_wheel = sum_of_fitness
+            self.thieves[i].fitness = (self.thieves[i].G - worst_G) * i/20
             sum_of_fitness += self.thieves[i].fitness
+            self.thieves[i].b_wheel = sum_of_fitness
 
         new_thieves = []
+
         while len(new_thieves) < self.number_of_thieves:
-            pick = random.uniform(0, sum_of_fitness)
-            current = 0
-            for thief in self.thieves:
-                current += thief.fitness
-                if current > pick:
-                    new_thieves.append(thief.copy())
-
-        self.thieves = new_thieves
-
-    def roulette_selection2(self):
-        worst_G = sorted(self.thieves, key=lambda x: x.G)[0].G - 1
-        sum_of_fitness = 0
-        sum_of_probability = 0
-        for i in range(self.number_of_thieves):
-            self.thieves[i].fitness = self.thieves[i].G - worst_G
-            sum_of_fitness += self.thieves[i].fitness
-
-        for i in range(self.number_of_thieves):
-            probability = self.thieves[i].fitness / sum_of_fitness
-            self.thieves[i].a_wheel = sum_of_probability
-            sum_of_probability += probability
-            self.thieves[i].b_wheel = sum_of_probability
-
-        new_thieves = []
-        while len(new_thieves) < self.number_of_thieves:
-            ind = random.random()
+            ind = random.uniform(0, sum_of_fitness)
             for i in range(self.number_of_thieves):
                 if self.thieves[i].b_wheel > ind > self.thieves[i].a_wheel:
                     new_thieves.append(self.thieves[i].copy())

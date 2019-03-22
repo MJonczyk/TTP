@@ -103,48 +103,6 @@ class Thief:
         self.cities = new_thief1.cities
         second_thief.cities = new_thief2.cities
 
-        # OX
-        def cross2(self, second_thief):
-            size = len(self.cities)
-            a = random.randrange(0, size - 1)
-            b = random.randrange(0, size)
-            k = 0
-            l = 0
-
-            while (b <= a):
-                b = random.randrange(0, size)
-
-            if a == 0:
-                k = b
-                l = b
-
-            first_alleles = [x.index for x in self.cities[a:b]]
-            second_alleles = [x.index for x in second_thief.cities[a:b]]
-
-            new_thief1 = [0] * size
-            new_thief2 = [0] * size
-
-            for i in range(a, b):
-                new_thief1[i] = second_thief.cities[i].index
-                new_thief2[i] = self.cities[i].index
-
-            for i in range(size):
-                if second_thief.cities[i].index not in first_alleles:
-                    new_thief2[k] = second_thief.cities[i].index
-                    k += 1
-                    if k == a:
-                        k = b
-                if self.cities[i].index not in second_alleles:
-                    new_thief1[l] = self.cities[i].index
-                    l += 1
-                    if l == a:
-                        l = b
-
-            for i in range(size):
-                self.cities[i] = second_thief.get_city(new_thief1[i])
-            for i in range(size):
-                second_thief.cities[i] = self.get_city(new_thief2[i])
-
     def copy(self):
         thief = Thief(list.copy(self.cities))
         thief.g = self.g
